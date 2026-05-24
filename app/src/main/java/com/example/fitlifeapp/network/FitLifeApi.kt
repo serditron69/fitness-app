@@ -8,10 +8,8 @@ import retrofit2.http.Path
 
 interface FitLifeApi {
 
-    @GET("api/alimentos/usuario/{idUsuario}")
-    suspend fun obtenerAlimentos(
-        @Path("idUsuario") idUsuario: Long
-    ): List<AlimentoDto>
+    @GET("api/alimentos")
+    suspend fun obtenerAlimentos(): List<AlimentoDto>
 
     @GET("api/rutinas/usuario/{idUsuario}/activas")
     suspend fun obtenerRutinasActivas(

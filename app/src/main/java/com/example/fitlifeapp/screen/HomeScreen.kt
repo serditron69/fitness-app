@@ -26,15 +26,14 @@ import com.example.fitlifeapp.viewmodel.HomeViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    vm: HomeViewModel,
-    idUsuario: Long = 1L
+    vm: HomeViewModel
 ) {
     val alimentos by vm.alimentos.collectAsState()
     val loading by vm.loading.collectAsState()
     val message by vm.message.collectAsState()
 
-    LaunchedEffect(idUsuario) {
-        vm.cargarAlimentos(idUsuario)
+    LaunchedEffect(Unit) {
+        vm.cargarAlimentos()
     }
 
     Scaffold(

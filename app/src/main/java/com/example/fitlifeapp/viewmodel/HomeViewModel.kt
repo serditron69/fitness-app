@@ -21,11 +21,11 @@ class HomeViewModel(
     private val _message = MutableStateFlow<String?>(null)
     val message: StateFlow<String?> = _message
 
-    fun cargarAlimentos(idUsuario: Long) {
+    fun cargarAlimentos() {
         viewModelScope.launch {
             _loading.value = true
             runCatching {
-                repository.obtenerAlimentos(idUsuario)
+                repository.obtenerAlimentos()
             }.onSuccess { lista ->
                 _alimentos.value = lista
                 _message.value = "Alimentos recibidos: ${lista.size}"
