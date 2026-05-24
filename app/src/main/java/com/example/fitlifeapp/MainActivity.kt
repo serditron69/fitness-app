@@ -3,7 +3,6 @@ package com.example.fitlifeapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -16,15 +15,15 @@ import com.example.fitlifeapp.screen.LoginScreen
 import com.example.fitlifeapp.screen.RegistroScreen
 import com.example.fitlifeapp.screen.RutinaDetalleScreen
 import com.example.fitlifeapp.screen.RutinasScreen
+import com.example.fitlifeapp.ui.theme.FitLifeAppTheme
 import com.example.fitlifeapp.viewmodel.AuthViewModel
 import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            MaterialTheme {
+            FitLifeAppTheme {
                 Surface {
                     val authVm: AuthViewModel = viewModel()
                     val rutinasVm: RutinasViewModel = viewModel()
@@ -40,7 +39,6 @@ class MainActivity : ComponentActivity() {
                             },
                             onIrARegistro = { currentScreen = "registro" }
                         )
-
                         "registro" -> RegistroScreen(
                             vm = authVm,
                             onRegistroExitoso = { id ->
@@ -49,21 +47,18 @@ class MainActivity : ComponentActivity() {
                             },
                             onIrALogin = { currentScreen = "login" }
                         )
-
                         "rutinas" -> RutinasScreen(
                             vm = rutinasVm,
                             idUsuario = idUsuario,
                             onOpenRutina = { currentScreen = "detalle" },
                             onCrearRutina = { currentScreen = "crearRutina" }
                         )
-
                         "crearRutina" -> CrearRutinaScreen(
                             vm = rutinasVm,
                             idUsuario = idUsuario,
                             onRutinaCreada = { currentScreen = "rutinas" },
                             onVolver = { currentScreen = "rutinas" }
                         )
-
                         "detalle" -> RutinaDetalleScreen(
                             vm = rutinasVm,
                             idUsuario = idUsuario

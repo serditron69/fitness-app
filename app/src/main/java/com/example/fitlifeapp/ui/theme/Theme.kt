@@ -1,29 +1,31 @@
 package com.example.fitlifeapp.ui.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-private val LightColors = lightColorScheme(
-    primary = GreenPrimary,
-    onPrimary = androidx.compose.ui.graphics.Color.White,
-    background = SurfaceSoft,
-    surface = androidx.compose.ui.graphics.Color.White,
-    onSurface = TextDark,
-    onSurfaceVariant = GrayText
-)
-
-private val DarkColors = darkColorScheme(
-    primary = GreenPrimary,
-    onPrimary = androidx.compose.ui.graphics.Color.White
+private val DarkColorScheme = darkColorScheme(
+    primary = PurplePrimary,
+    onPrimary = Color.White,
+    primaryContainer = PurpleDark,
+    onPrimaryContainer = PurpleLight,
+    secondary = PurpleAccent,
+    onSecondary = Color.White,
+    background = BackgroundDark,
+    onBackground = TextPrimary,
+    surface = BackgroundCard,
+    onSurface = TextPrimary,
+    surfaceVariant = SurfaceColor,
+    onSurfaceVariant = TextSecondary,
+    error = ErrorColor,
+    onError = Color.White
 )
 
 @Composable
-fun FitLifeTheme(content: @Composable () -> Unit) {
+fun FitLifeAppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) DarkColors else LightColors,
+        colorScheme = DarkColorScheme,
         typography = Typography,
         content = content
     )
