@@ -21,9 +21,8 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
         android:extractNativeLibs="false"
-        android:label="FitLife"
+        android:label="FitLifeApp"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/Theme.FitLifeApp" >
         <activity
             android:name="com.example.fitlifeapp.MainActivity"
