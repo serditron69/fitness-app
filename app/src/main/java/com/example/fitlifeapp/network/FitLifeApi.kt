@@ -8,28 +8,28 @@ import retrofit2.http.Path
 
 interface FitLifeApi {
 
-    @GET("alimentos/usuario/{idUsuario}")
+    @GET("api/alimentos/usuario/{idUsuario}")
     suspend fun obtenerAlimentos(
         @Path("idUsuario") idUsuario: Long
     ): List<AlimentoDto>
 
-    @GET("rutinas/activas/{idUsuario}")
+    @GET("api/rutinas/activas/{idUsuario}")
     suspend fun obtenerRutinasActivas(
         @Path("idUsuario") idUsuario: Long
     ): List<RutinaDto>
 
-    @GET("rutinas/{idRutina}/ejercicios")
+    @GET("api/rutinas/{idRutina}/ejercicios")
     suspend fun obtenerEjerciciosDeRutina(
         @Path("idRutina") idRutina: Long
     ): List<RutinaEjercicioDto>
 
-    @PUT("rutina-ejercicios/{idRutinaEjercicio}")
+    @PUT("api/rutina-ejercicios/{idRutinaEjercicio}")
     suspend fun actualizarRutinaEjercicio(
         @Path("idRutinaEjercicio") idRutinaEjercicio: Long,
         @Body item: RutinaEjercicioDto
     ): RutinaEjercicioDto
 
-    @POST("entrenamientos")
+    @POST("api/entrenamientos")
     suspend fun registrarEntrenamiento(
         @Body registro: RegistroEntrenamientoDto
     )
