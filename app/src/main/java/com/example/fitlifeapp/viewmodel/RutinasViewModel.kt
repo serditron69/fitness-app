@@ -1,7 +1,12 @@
-package com.example.ftness_app
+package com.example.fitlifeapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fitlifeapp.network.RegistroEntrenamientoDto
+import com.example.fitlifeapp.network.RutinaDto
+import com.example.fitlifeapp.network.RutinaEjercicioDto
+import com.example.fitlifeapp.network.UsuarioRefDto
+import com.example.fitlifeapp.repository.FitnessRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -79,7 +84,7 @@ class RutinasViewModel(
     private fun guardarCambio(item: RutinaEjercicioDto) {
         viewModelScope.launch {
             runCatching {
-                repository.actualizarRutinaEjercicio(item)
+                repository.actualizarRutinaEjercicio(item.idRutinaEjercicio, item)
             }.onSuccess { actualizado ->
                 _ejerciciosRutina.value = _ejerciciosRutina.value.map {
                     if (it.idRutinaEjercicio == actualizado.idRutinaEjercicio) actualizado else it
@@ -102,7 +107,7 @@ class RutinasViewModel(
             runCatching {
                 repository.registrarEntrenamiento(
                     RegistroEntrenamientoDto(
-                        usuario = UsuarioRefDto(idUsuario),
+                        usuario = UsuarioRefDto(idUsuario = idUsuario),
                         rutina = rutina,
                         fecha = LocalDate.now().toString(),
                         duracionMin = duracionMin,

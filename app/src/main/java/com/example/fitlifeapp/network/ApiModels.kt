@@ -1,12 +1,12 @@
-package com.example.ftness_app
+package com.example.fitlifeapp.network
 
-data class RutinaDto(
-    val idRutina: Long,
+data class AlimentoDto(
+    val idAlimento: Long,
     val nombre: String,
-    val descripcion: String? = null,
-    val objetivo: String,
-    val nivel: String,
-    val activa: Boolean
+    val calorias: Double,
+    val proteinas: Double,
+    val carbohidratos: Double,
+    val grasas: Double
 )
 
 data class EjercicioDto(
@@ -18,16 +18,21 @@ data class EjercicioDto(
     val equipamiento: String? = null
 )
 
+data class RutinaDto(
+    val idRutina: Long,
+    val nombre: String,
+    val descripcion: String? = null,
+    val objetivo: String,
+    val nivel: String
+)
+
 data class RutinaEjercicioDto(
     val idRutinaEjercicio: Long,
     val rutina: RutinaDto? = null,
     val ejercicio: EjercicioDto? = null,
     val series: Int,
     val repeticiones: Int,
-    val pesoKg: Double? = null,
-    val duracionSeg: Int? = null,
-    val tiempoDescansoSeg: Int? = null,
-    val orden: Int? = null
+    val pesoKg: Double? = null
 )
 
 data class UsuarioRefDto(
@@ -35,12 +40,10 @@ data class UsuarioRefDto(
 )
 
 data class RegistroEntrenamientoDto(
-    val idRegistro: Long? = null,
-    val usuario: UsuarioRefDto? = null,
-    val rutina: RutinaDto? = null,
+    val usuario: UsuarioRefDto,
+    val rutina: RutinaDto,
     val fecha: String,
-    val duracionMin: Int? = null,
-    val caloriasQuemadas: Int? = null,
-    val notas: String? = null,
-    val estado: String = "COMPLETADO"
+    val duracionMin: Int,
+    val notas: String,
+    val estado: String
 )

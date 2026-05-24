@@ -5,7 +5,8 @@
         android:allowBackup="true"
         android:label="FitLifeApp"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FitLifeApp">
+        android:theme="@style/Theme.FitLifeApp"
+        android:networkSecurityConfig="@xml/network_security_config">
         <activity
             android:name=".MainActivity"
             android:exported="true">

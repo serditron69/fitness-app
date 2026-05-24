@@ -1,4 +1,4 @@
-package com.example.ftness_app
+package com.example.fitlifeapp.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,6 +29,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.fitlifeapp.network.RutinaEjercicioDto
+import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,7 +39,7 @@ fun RutinaDetalleScreen(
     idUsuario: Long = 1L
 ) {
     val rutina by vm.rutinaSeleccionada.collectAsState()
-    val ejercicios by vm.ejerciciosRutina.collectAsState()
+    val ejercicios: List<RutinaEjercicioDto> by vm.ejerciciosRutina.collectAsState()
     val message by vm.message.collectAsState()
 
     var duracion by remember { mutableStateOf("") }
@@ -133,9 +135,7 @@ private fun EjercicioEditableCard(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            Text(
-                text = item.ejercicio?.grupoMuscular ?: ""
-            )
+            Text(text = item.ejercicio?.grupoMuscular ?: "")
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = { onSeriesChange(item.series - 1) }) {

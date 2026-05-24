@@ -1,19 +1,36 @@
-package com.example.ftness_app
+package com.example.fitlifeapp.repository
 
-class FitnessRepository {
+import com.example.fitlifeapp.network.AlimentoDto
+import com.example.fitlifeapp.network.FitLifeApi
+import com.example.fitlifeapp.network.RegistroEntrenamientoDto
+import com.example.fitlifeapp.network.RetrofitClient
+import com.example.fitlifeapp.network.RutinaDto
+import com.example.fitlifeapp.network.RutinaEjercicioDto
 
-    private val api = RetrofitClient.api
+class FitnessRepository(
+    private val api: FitLifeApi = RetrofitClient.api
+) {
 
-    suspend fun obtenerRutinasActivas(idUsuario: Long) =
-        api.getRutinasActivas(idUsuario)
-
-    suspend fun obtenerEjerciciosDeRutina(idRutina: Long) =
-        api.getRutinaEjercicios(idRutina).sortedBy { it.orden ?: Int.MAX_VALUE }
-
-    suspend fun actualizarRutinaEjercicio(item: RutinaEjercicioDto): RutinaEjercicioDto {
-        return api.updateRutinaEjercicio(item.idRutinaEjercicio, item)
+    suspend fun obtenerAlimentos(idUsuario: Long): List<AlimentoDto> {
+        return api.obtenerAlimentos(idUsuario)
     }
 
-    suspend fun registrarEntrenamiento(body: RegistroEntrenamientoDto) =
-        api.crearRegistroEntrenamiento(body)
+    suspend fun obtenerRutinasActivas(idUsuario: Long): List<RutinaDto> {
+        return api.obtenerRutinasActivas(idUsuario)
+    }
+
+    suspend fun obtenerEjerciciosDeRutina(idRutina: Long): List<RutinaEjercicioDto> {
+        return api.obtenerEjerciciosDeRutina(idRutina)
+    }
+
+    suspend fun actualizarRutinaEjercicio(
+        idRutinaEjercicio: Long,
+        item: RutinaEjercicioDto
+    ): RutinaEjercicioDto {
+        return api.actualizarRutinaEjercicio(idRutinaEjercicio, item)
+    }
+
+    suspend fun registrarEntrenamiento(registro: RegistroEntrenamientoDto) {
+        api.registrarEntrenamiento(registro)
+    }
 }

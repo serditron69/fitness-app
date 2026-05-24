@@ -1,4 +1,4 @@
-package com.example.ftness_app
+package com.example.fitlifeapp.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.fitlifeapp.network.RutinaDto
+import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -84,7 +86,10 @@ private fun RutinaItem(
             .clickable(onClick = onClick)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(text = rutina.nombre, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = rutina.nombre,
+                style = MaterialTheme.typography.titleMedium
+            )
             Text(text = rutina.descripcion ?: rutina.objetivo)
             Text(text = "Nivel: ${rutina.nivel}")
         }
