@@ -1,14 +1,4 @@
-package com.example.fitlifeapp.network
-
-data class AlimentoDto(
-    val idAlimento: Long,
-    val nombre: String,
-    val calorias: Int? = null,
-    val proteinas: Double? = null,
-    val carbohidratos: Double? = null,
-    val grasas: Double? = null,
-    val porcion: String? = null
-)
+package com.example.ftness_app
 
 data class RutinaDto(
     val idRutina: Long,

@@ -1,4 +1,4 @@
-package com.example.fitlifeapp.screen
+package com.example.ftness_app
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,7 +16,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.fitlifeapp.network.EjercicioDto
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,37 +28,28 @@ fun EjerciciosScreen(
                 title = { Text("Ejercicios") }
             )
         }
-    ) { padding ->
+    ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
+                .padding(paddingValues)
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(ejercicios) { ejercicio ->
-                EjercicioItem(ejercicio)
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = ejercicio.nombre,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(text = "Grupo muscular: ${ejercicio.grupoMuscular}")
+                        Text(text = "Tipo: ${ejercicio.tipo}")
+                        Text(text = "Descripción: ${ejercicio.descripcion ?: "Sin descripción"}")
+                        Text(text = "Equipamiento: ${ejercicio.equipamiento ?: "Sin equipamiento"}")
+                    }
+                }
             }
-        }
-    }
-}
-
-@Composable
-private fun EjercicioItem(ejercicio: EjercicioDto) {
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Text(
-                text = ejercicio.nombre,
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(text = "Grupo muscular: ${ejercicio.grupoMuscular}")
-            Text(text = "Tipo: ${ejercicio.tipo}")
-            Text(text = "Descripción: ${ejercicio.descripcion ?: "Sin descripción"}")
-            Text(text = "Equipamiento: ${ejercicio.equipamiento ?: "Sin equipamiento"}")
         }
     }
 }

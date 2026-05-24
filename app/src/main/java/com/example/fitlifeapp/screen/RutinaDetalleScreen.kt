@@ -1,12 +1,14 @@
-package com.example.fitlifeapp.screen
+package com.example.ftness_app
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
@@ -27,8 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.fitlifeapp.network.RutinaEjercicioDto
-import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,17 +45,22 @@ fun RutinaDetalleScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(rutina?.nombre ?: "Detalle rutina") })
+            TopAppBar(
+                title = { Text(rutina?.nombre ?: "Detalle rutina") }
+            )
         }
-    ) { padding ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .padding(16.dp)
+                .padding(paddingValues)
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             LazyColumn(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(350.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(ejercicios) { item ->
@@ -67,8 +72,6 @@ fun RutinaDetalleScreen(
                     )
                 }
             }
-
-            Spacer(modifier = Modifier.padding(4.dp))
 
             OutlinedTextField(
                 value = duracion,
@@ -82,9 +85,7 @@ fun RutinaDetalleScreen(
                 value = notas,
                 onValueChange = { notas = it },
                 label = { Text("Notas") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             )
 
             Button(
@@ -95,19 +96,16 @@ fun RutinaDetalleScreen(
                         notas = notas
                     )
                 },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Finalizar entrenamiento")
             }
 
             message?.let {
-                Text(
-                    text = it,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                Text(text = it)
             }
+
+            Spacer(modifier = Modifier.size(4.dp))
         }
     }
 }
@@ -123,22 +121,27 @@ private fun EjercicioEditableCard(
         mutableStateOf(item.pesoKg?.toString() ?: "")
     }
 
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp)) {
+    ElevatedCard(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
             Text(
                 text = item.ejercicio?.nombre ?: "Ejercicio",
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(text = item.ejercicio?.grupoMuscular ?: "")
+
+            Text(
+                text = item.ejercicio?.grupoMuscular ?: ""
+            )
 
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = { onSeriesChange(item.series - 1) }) {
                     Text("-")
                 }
-                Text(
-                    text = "Series: ${item.series}",
-                    modifier = Modifier.padding(top = 12.dp)
-                )
+                Text(text = "Series: ${item.series}")
                 Button(onClick = { onSeriesChange(item.series + 1) }) {
                     Text("+")
                 }
@@ -148,10 +151,7 @@ private fun EjercicioEditableCard(
                 Button(onClick = { onRepsChange(item.repeticiones - 1) }) {
                     Text("-")
                 }
-                Text(
-                    text = "Reps: ${item.repeticiones}",
-                    modifier = Modifier.padding(top = 12.dp)
-                )
+                Text(text = "Reps: ${item.repeticiones}")
                 Button(onClick = { onRepsChange(item.repeticiones + 1) }) {
                     Text("+")
                 }

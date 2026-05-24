@@ -1,4 +1,4 @@
-package com.example.fitlifeapp.network
+package com.example.ftness_app
 
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -7,9 +7,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface FitLifeApi {
-
-    @GET("api/alimentos")
-    suspend fun getAlimentos(): List<AlimentoDto>
 
     @GET("api/rutinas/usuario/{idUsuario}/activas")
     suspend fun getRutinasActivas(

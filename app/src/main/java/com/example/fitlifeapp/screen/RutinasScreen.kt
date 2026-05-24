@@ -1,4 +1,4 @@
-package com.example.fitlifeapp.screen
+package com.example.ftness_app
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,8 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.fitlifeapp.network.RutinaDto
-import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,31 +32,42 @@ fun RutinasScreen(
 ) {
     val rutinas by vm.rutinas.collectAsState()
     val loading by vm.loading.collectAsState()
+    val message by vm.message.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(idUsuario) {
         vm.cargarRutinas(idUsuario)
     }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Rutinas") }) }
     ) { padding ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .padding(16.dp)
         ) {
-            when {
-                loading -> CircularProgressIndicator()
-                rutinas.isEmpty() -> Text("No hay rutinas activas")
-                else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    items(rutinas) { rutina ->
-                        RutinaItem(rutina) {
-                            vm.seleccionarRutina(rutina)
-                            onOpenRutina()
+            Box(modifier = Modifier.weight(1f)) {
+                when {
+                    loading -> CircularProgressIndicator()
+                    rutinas.isEmpty() -> Text("No hay rutinas activas")
+                    else -> LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        items(rutinas) { rutina ->
+                            RutinaItem(rutina) {
+                                vm.seleccionarRutina(rutina)
+                                onOpenRutina()
+                            }
                         }
                     }
                 }
+            }
+
+            message?.let {
+                Text(
+                    text = it,
+                    modifier = Modifier.padding(top = 12.dp),
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }
@@ -75,9 +84,9 @@ private fun RutinaItem(
             .clickable(onClick = onClick)
     ) {
         Column(Modifier.padding(16.dp)) {
-            Text(rutina.nombre, style = MaterialTheme.typography.titleMedium)
-            Text(rutina.descripcion ?: rutina.objetivo)
-            Text("Nivel: ${rutina.nivel}")
+            Text(text = rutina.nombre, style = MaterialTheme.typography.titleMedium)
+            Text(text = rutina.descripcion ?: rutina.objetivo)
+            Text(text = "Nivel: ${rutina.nivel}")
         }
     }
 }

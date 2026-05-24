@@ -1,4 +1,4 @@
-package com.example.fitlifeapp
+package com.example.ftness_app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.fitlifeapp.screen.RutinaDetalleScreen
-import com.example.fitlifeapp.screen.RutinasScreen
-import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,10 +24,12 @@ class MainActivity : ComponentActivity() {
                     when (currentScreen) {
                         "rutinas" -> RutinasScreen(
                             vm = vm,
+                            idUsuario = 1L,
                             onOpenRutina = { currentScreen = "detalle" }
                         )
                         "detalle" -> RutinaDetalleScreen(
-                            vm = vm
+                            vm = vm,
+                            idUsuario = 1L
                         )
                     }
                 }

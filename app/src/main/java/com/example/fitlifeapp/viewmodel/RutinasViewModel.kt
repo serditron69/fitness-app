@@ -1,12 +1,7 @@
-package com.example.fitlifeapp.viewmodel
+package com.example.ftness_app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fitlifeapp.network.RegistroEntrenamientoDto
-import com.example.fitlifeapp.network.RutinaDto
-import com.example.fitlifeapp.network.RutinaEjercicioDto
-import com.example.fitlifeapp.network.UsuarioRefDto
-import com.example.fitlifeapp.repository.FitnessRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -36,10 +31,11 @@ class RutinasViewModel(
             _loading.value = true
             runCatching {
                 repository.obtenerRutinasActivas(idUsuario)
-            }.onSuccess {
-                _rutinas.value = it
-            }.onFailure {
-                _message.value = "Error cargando rutinas: ${it.message}"
+            }.onSuccess { lista ->
+                _rutinas.value = lista
+                _message.value = "Rutinas recibidas: ${lista.size}"
+            }.onFailure { e ->
+                _message.value = "Error cargando rutinas: ${e.message}"
             }
             _loading.value = false
         }
@@ -55,10 +51,11 @@ class RutinasViewModel(
             _loading.value = true
             runCatching {
                 repository.obtenerEjerciciosDeRutina(idRutina)
-            }.onSuccess {
-                _ejerciciosRutina.value = it
-            }.onFailure {
-                _message.value = "Error cargando ejercicios: ${it.message}"
+            }.onSuccess { lista ->
+                _ejerciciosRutina.value = lista
+                _message.value = "Ejercicios recibidos: ${lista.size}"
+            }.onFailure { e ->
+                _message.value = "Error cargando ejercicios: ${e.message}"
             }
             _loading.value = false
         }
@@ -87,8 +84,9 @@ class RutinasViewModel(
                 _ejerciciosRutina.value = _ejerciciosRutina.value.map {
                     if (it.idRutinaEjercicio == actualizado.idRutinaEjercicio) actualizado else it
                 }
-            }.onFailure {
-                _message.value = "No se pudo actualizar: ${it.message}"
+                _message.value = "Ejercicio actualizado"
+            }.onFailure { e ->
+                _message.value = "No se pudo actualizar: ${e.message}"
             }
         }
     }
@@ -114,13 +112,9 @@ class RutinasViewModel(
                 )
             }.onSuccess {
                 _message.value = "Entrenamiento guardado"
-            }.onFailure {
-                _message.value = "Error guardando entrenamiento: ${it.message}"
+            }.onFailure { e ->
+                _message.value = "Error guardando entrenamiento: ${e.message}"
             }
         }
-    }
-
-    fun limpiarMensaje() {
-        _message.value = null
     }
 }
