@@ -43,4 +43,9 @@ interface FitLifeApi {
         @Query("email") email: String,
         @Query("password") password: String
     ): UsuarioDto
+
+    @POST("api/rutinas")
+    suspend fun crearRutina(
+        @Body rutina: RutinaCrearDto
+    ): RutinaDto
 }

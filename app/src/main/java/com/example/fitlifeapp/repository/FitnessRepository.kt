@@ -4,9 +4,11 @@ import com.example.fitlifeapp.network.AlimentoDto
 import com.example.fitlifeapp.network.FitLifeApi
 import com.example.fitlifeapp.network.RegistroEntrenamientoDto
 import com.example.fitlifeapp.network.RetrofitClient
+import com.example.fitlifeapp.network.RutinaCrearDto
 import com.example.fitlifeapp.network.RutinaDto
 import com.example.fitlifeapp.network.RutinaEjercicioDto
 import com.example.fitlifeapp.network.UsuarioDto
+import com.example.fitlifeapp.network.UsuarioRefDto
 
 class FitnessRepository(
     private val api: FitLifeApi = RetrofitClient.api
@@ -18,6 +20,19 @@ class FitnessRepository(
 
     suspend fun obtenerRutinasActivas(idUsuario: Long): List<RutinaDto> {
         return api.obtenerRutinasActivas(idUsuario)
+    }
+
+    suspend fun crearRutina(rutina: RutinaDto, idUsuario: Long): RutinaDto {
+        return api.crearRutina(
+            RutinaCrearDto(
+                nombre = rutina.nombre,
+                descripcion = rutina.descripcion,
+                objetivo = rutina.objetivo,
+                nivel = rutina.nivel,
+                activa = true,
+                usuario = UsuarioRefDto(idUsuario = idUsuario)
+            )
+        )
     }
 
     suspend fun obtenerEjerciciosDeRutina(idRutina: Long): List<RutinaEjercicioDto> {

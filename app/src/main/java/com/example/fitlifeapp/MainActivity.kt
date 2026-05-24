@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fitlifeapp.screen.CrearRutinaScreen
 import com.example.fitlifeapp.screen.LoginScreen
 import com.example.fitlifeapp.screen.RegistroScreen
 import com.example.fitlifeapp.screen.RutinaDetalleScreen
@@ -52,7 +53,15 @@ class MainActivity : ComponentActivity() {
                         "rutinas" -> RutinasScreen(
                             vm = rutinasVm,
                             idUsuario = idUsuario,
-                            onOpenRutina = { currentScreen = "detalle" }
+                            onOpenRutina = { currentScreen = "detalle" },
+                            onCrearRutina = { currentScreen = "crearRutina" }
+                        )
+
+                        "crearRutina" -> CrearRutinaScreen(
+                            vm = rutinasVm,
+                            idUsuario = idUsuario,
+                            onRutinaCreada = { currentScreen = "rutinas" },
+                            onVolver = { currentScreen = "rutinas" }
                         )
 
                         "detalle" -> RutinaDetalleScreen(

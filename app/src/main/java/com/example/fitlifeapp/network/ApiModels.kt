@@ -26,6 +26,15 @@ data class RutinaDto(
     val nivel: String
 )
 
+data class RutinaCrearDto(
+    val nombre: String,
+    val descripcion: String?,
+    val objetivo: String,
+    val nivel: String,
+    val activa: Boolean = true,
+    val usuario: UsuarioRefDto
+)
+
 data class RutinaEjercicioDto(
     val idRutinaEjercicio: Long,
     val rutina: RutinaDto? = null,

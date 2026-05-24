@@ -46,6 +46,36 @@ class RutinasViewModel(
         }
     }
 
+    fun crearRutina(
+        idUsuario: Long,
+        nombre: String,
+        descripcion: String,
+        objetivo: String,
+        nivel: String
+    ) {
+        viewModelScope.launch {
+            _loading.value = true
+            runCatching {
+                repository.crearRutina(
+                    RutinaDto(
+                        idRutina = 0,
+                        nombre = nombre,
+                        descripcion = descripcion,
+                        objetivo = objetivo,
+                        nivel = nivel
+                    ),
+                    idUsuario = idUsuario
+                )
+            }.onSuccess {
+                _message.value = "Rutina creada"
+                cargarRutinas(idUsuario)
+            }.onFailure { e ->
+                _message.value = "Error creando rutina: ${e.message}"
+            }
+            _loading.value = false
+        }
+    }
+
     fun seleccionarRutina(rutina: RutinaDto) {
         _rutinaSeleccionada.value = rutina
         cargarEjerciciosRutina(rutina.idRutina)
@@ -96,13 +126,8 @@ class RutinasViewModel(
         }
     }
 
-    fun finalizarRutina(
-        idUsuario: Long,
-        duracionMin: Int,
-        notas: String
-    ) {
+    fun finalizarRutina(idUsuario: Long, duracionMin: Int, notas: String) {
         val rutina = _rutinaSeleccionada.value ?: return
-
         viewModelScope.launch {
             runCatching {
                 repository.registrarEntrenamiento(
