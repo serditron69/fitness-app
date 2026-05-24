@@ -47,3 +47,15 @@ data class RegistroEntrenamientoDto(
     val notas: String,
     val estado: String
 )
+
+data class UsuarioDto(
+    val idUsuario: Long = 0,
+    val nombre: String,
+    val email: String,
+    val password: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
+)

@@ -6,12 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.fitlifeapp.screen.LoginScreen
+import com.example.fitlifeapp.screen.RegistroScreen
 import com.example.fitlifeapp.screen.RutinaDetalleScreen
 import com.example.fitlifeapp.screen.RutinasScreen
+import com.example.fitlifeapp.viewmodel.AuthViewModel
 import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 class MainActivity : ComponentActivity() {
@@ -21,24 +25,40 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface {
-                    val vm: RutinasViewModel = viewModel()
-                    var currentScreen by remember { mutableStateOf("rutinas") }
+                    val authVm: AuthViewModel = viewModel()
+                    val rutinasVm: RutinasViewModel = viewModel()
+                    var currentScreen by remember { mutableStateOf("login") }
+                    var idUsuario by remember { mutableLongStateOf(0L) }
 
                     when (currentScreen) {
-                        "rutinas" -> {
-                            RutinasScreen(
-                                vm = vm,
-                                idUsuario = 1L,
-                                onOpenRutina = { currentScreen = "detalle" }
-                            )
-                        }
+                        "login" -> LoginScreen(
+                            vm = authVm,
+                            onLoginExitoso = { id ->
+                                idUsuario = id
+                                currentScreen = "rutinas"
+                            },
+                            onIrARegistro = { currentScreen = "registro" }
+                        )
 
-                        "detalle" -> {
-                            RutinaDetalleScreen(
-                                vm = vm,
-                                idUsuario = 1L
-                            )
-                        }
+                        "registro" -> RegistroScreen(
+                            vm = authVm,
+                            onRegistroExitoso = { id ->
+                                idUsuario = id
+                                currentScreen = "rutinas"
+                            },
+                            onIrALogin = { currentScreen = "login" }
+                        )
+
+                        "rutinas" -> RutinasScreen(
+                            vm = rutinasVm,
+                            idUsuario = idUsuario,
+                            onOpenRutina = { currentScreen = "detalle" }
+                        )
+
+                        "detalle" -> RutinaDetalleScreen(
+                            vm = rutinasVm,
+                            idUsuario = idUsuario
+                        )
                     }
                 }
             }

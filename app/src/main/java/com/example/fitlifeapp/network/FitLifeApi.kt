@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface FitLifeApi {
 
@@ -31,4 +32,15 @@ interface FitLifeApi {
     suspend fun registrarEntrenamiento(
         @Body registro: RegistroEntrenamientoDto
     )
+
+    @POST("api/usuarios")
+    suspend fun registrarUsuario(
+        @Body usuario: UsuarioDto
+    ): UsuarioDto
+
+    @POST("api/usuarios/login")
+    suspend fun login(
+        @Query("email") email: String,
+        @Query("password") password: String
+    ): UsuarioDto
 }

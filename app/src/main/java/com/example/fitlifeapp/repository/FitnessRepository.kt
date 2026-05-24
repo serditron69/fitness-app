@@ -6,13 +6,14 @@ import com.example.fitlifeapp.network.RegistroEntrenamientoDto
 import com.example.fitlifeapp.network.RetrofitClient
 import com.example.fitlifeapp.network.RutinaDto
 import com.example.fitlifeapp.network.RutinaEjercicioDto
+import com.example.fitlifeapp.network.UsuarioDto
 
 class FitnessRepository(
     private val api: FitLifeApi = RetrofitClient.api
 ) {
 
-    suspend fun obtenerAlimentos(idUsuario: Long): List<AlimentoDto> {
-        return api.obtenerAlimentos(idUsuario)
+    suspend fun obtenerAlimentos(): List<AlimentoDto> {
+        return api.obtenerAlimentos()
     }
 
     suspend fun obtenerRutinasActivas(idUsuario: Long): List<RutinaDto> {
@@ -32,5 +33,13 @@ class FitnessRepository(
 
     suspend fun registrarEntrenamiento(registro: RegistroEntrenamientoDto) {
         api.registrarEntrenamiento(registro)
+    }
+
+    suspend fun registrarUsuario(usuario: UsuarioDto): UsuarioDto {
+        return api.registrarUsuario(usuario)
+    }
+
+    suspend fun login(email: String, password: String): UsuarioDto {
+        return api.login(email, password)
     }
 }
