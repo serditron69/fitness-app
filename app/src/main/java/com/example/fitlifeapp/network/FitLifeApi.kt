@@ -13,12 +13,12 @@ interface FitLifeApi {
         @Path("idUsuario") idUsuario: Long
     ): List<AlimentoDto>
 
-    @GET("api/rutinas/activas/{idUsuario}")
+    @GET("api/rutinas/usuario/{idUsuario}/activas")
     suspend fun obtenerRutinasActivas(
         @Path("idUsuario") idUsuario: Long
     ): List<RutinaDto>
 
-    @GET("api/rutinas/{idRutina}/ejercicios")
+    @GET("api/rutina-ejercicios/rutina/{idRutina}")
     suspend fun obtenerEjerciciosDeRutina(
         @Path("idRutina") idRutina: Long
     ): List<RutinaEjercicioDto>
@@ -29,7 +29,7 @@ interface FitLifeApi {
         @Body item: RutinaEjercicioDto
     ): RutinaEjercicioDto
 
-    @POST("api/entrenamientos")
+    @POST("api/registros")
     suspend fun registrarEntrenamiento(
         @Body registro: RegistroEntrenamientoDto
     )
