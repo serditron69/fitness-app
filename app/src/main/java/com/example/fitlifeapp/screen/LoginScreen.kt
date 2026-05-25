@@ -8,7 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -19,25 +18,28 @@ import androidx.compose.ui.unit.sp
 import com.example.fitlifeapp.ui.theme.*
 import com.example.fitlifeapp.viewmodel.AuthViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     vm: AuthViewModel,
-    onLoginExitoso: (Long) -> Unit,
-    onIrARegistro: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onGoToRegister: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val loading by vm.loading.collectAsState()
-    val error by vm.error.collectAsState()
-    val loginExitoso by vm.loginExitoso.collectAsState()
     val usuario by vm.usuario.collectAsState()
+    val loading by vm.loading.collectAsState()
+    val message by vm.message.collectAsState()
 
-    LaunchedEffect(loginExitoso) {
-        if (loginExitoso) {
-            usuario?.let { onLoginExitoso(it.idUsuario) }
-            vm.resetLoginExitoso()
-        }
+    // Limpia el usuario al entrar a la pantalla de login
+    LaunchedEffect(Unit) {
+        vm.cerrarSesion()
+    }
+
+    // Navega cuando el usuario se actualiza
+    LaunchedEffect(usuario) {
+        if (usuario != null) onLoginSuccess()
     }
 
     Box(
@@ -61,16 +63,14 @@ fun LoginScreen(
                 fontSize = 64.sp,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-
             Text(
                 text = "FitLife",
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
                 color = PurpleLight
             )
-
             Text(
-                text = "Tu compañero de entrenamiento",
+                text = "Tu companero de entrenamiento",
                 fontSize = 14.sp,
                 color = TextSecondary,
                 modifier = Modifier.padding(bottom = 40.dp)
@@ -86,7 +86,7 @@ fun LoginScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Iniciar Sesión",
+                        text = "Iniciar Sesion",
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
@@ -112,7 +112,7 @@ fun LoginScreen(
                     OutlinedTextField(
                         value = password,
                         onValueChange = { password = it },
-                        label = { Text("Contraseña") },
+                        label = { Text("Contrasena") },
                         visualTransformation = PasswordVisualTransformation(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         modifier = Modifier.fillMaxWidth(),
@@ -127,12 +127,29 @@ fun LoginScreen(
                         shape = RoundedCornerShape(12.dp)
                     )
 
-                    error?.let {
-                        Text(text = it, color = ErrorColor, fontSize = 13.sp)
+                    message?.let {
+                        Text(
+                            text = it,
+                            color = ErrorColor,
+                            fontSize = 13.sp
+                        )
+                    }
+
+                    // Indicador de carga visible
+                    if (loading) {
+                        LinearProgressIndicator(
+                            modifier = Modifier.fillMaxWidth(),
+                            color = PurplePrimary
+                        )
+                        Text(
+                            text = "Conectando con el servidor...",
+                            color = TextSecondary,
+                            fontSize = 12.sp
+                        )
                     }
 
                     Button(
-                        onClick = { vm.login(email, password) },
+                        onClick = { vm.login(email.trim(), password.trim()) },
                         enabled = !loading && email.isNotBlank() && password.isNotBlank(),
                         modifier = Modifier
                             .fillMaxWidth()
@@ -140,20 +157,20 @@ fun LoginScreen(
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PurplePrimary)
                     ) {
-                        if (loading) CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = Color.White
+                        Text(
+                            "Iniciar Sesion",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
                         )
-                        else Text("Iniciar Sesión", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                 }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            TextButton(onClick = onIrARegistro) {
+            TextButton(onClick = onGoToRegister) {
                 Text(
-                    text = "¿No tienes cuenta? Regístrate",
+                    text = "No tienes cuenta? Registrate",
                     color = PurpleLight,
                     fontSize = 14.sp
                 )

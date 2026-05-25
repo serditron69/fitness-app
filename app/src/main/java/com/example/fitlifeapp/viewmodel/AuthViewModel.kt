@@ -18,45 +18,43 @@ class AuthViewModel(
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading
 
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    private val _loginExitoso = MutableStateFlow(false)
-    val loginExitoso: StateFlow<Boolean> = _loginExitoso
+    private val _message = MutableStateFlow<String?>(null)
+    val message: StateFlow<String?> = _message
 
     fun login(email: String, password: String) {
         viewModelScope.launch {
             _loading.value = true
-            _error.value = null
+            _message.value = null
             runCatching {
                 repository.login(email, password)
             }.onSuccess { user ->
                 _usuario.value = user
-                _loginExitoso.value = true
             }.onFailure {
-                _error.value = "Email o contraseña incorrectos"
+                _message.value = "Email o contrasena incorrectos"
             }
             _loading.value = false
         }
     }
 
-    fun registrar(nombre: String, email: String, password: String) {
+    fun registrarUsuario(nombre: String, email: String, password: String) {
         viewModelScope.launch {
             _loading.value = true
-            _error.value = null
+            _message.value = null
             runCatching {
-                repository.registrarUsuario(UsuarioDto(nombre = nombre, email = email, password = password))
+                repository.registrarUsuario(
+                    UsuarioDto(nombre = nombre, email = email, password = password)
+                )
             }.onSuccess { user ->
                 _usuario.value = user
-                _loginExitoso.value = true
             }.onFailure {
-                _error.value = "Error al registrarse, intenta de nuevo"
+                _message.value = "Error al registrarse, intenta de nuevo"
             }
             _loading.value = false
         }
     }
 
-    fun resetLoginExitoso() {
-        _loginExitoso.value = false
+    fun cerrarSesion() {
+        _usuario.value = null
+        _message.value = null
     }
 }

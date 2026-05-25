@@ -2,10 +2,7 @@ package com.example.fitlifeapp.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fitlifeapp.network.RegistroEntrenamientoDto
-import com.example.fitlifeapp.network.RutinaDto
-import com.example.fitlifeapp.network.RutinaEjercicioDto
-import com.example.fitlifeapp.network.UsuarioRefDto
+import com.example.fitlifeapp.network.*
 import com.example.fitlifeapp.repository.FitnessRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,9 +33,9 @@ class RutinasViewModel(
             _loading.value = true
             runCatching {
                 repository.obtenerRutinasActivas(idUsuario)
-            }.onSuccess { lista ->
-                _rutinas.value = lista
-                _message.value = "Rutinas recibidas: ${lista.size}"
+            }.onSuccess {
+                _rutinas.value = it
+                _message.value = null
             }.onFailure { e ->
                 _message.value = "Error cargando rutinas: ${e.message}"
             }
@@ -57,14 +54,14 @@ class RutinasViewModel(
             _loading.value = true
             runCatching {
                 repository.crearRutina(
-                    RutinaDto(
-                        idRutina = 0,
+                    RutinaCrearDto(
                         nombre = nombre,
                         descripcion = descripcion,
                         objetivo = objetivo,
-                        nivel = nivel
-                    ),
-                    idUsuario = idUsuario
+                        nivel = nivel,
+                        activa = true,
+                        usuario = UsuarioRefDto(idUsuario)
+                    )
                 )
             }.onSuccess {
                 _message.value = "Rutina creada"
@@ -86,9 +83,9 @@ class RutinasViewModel(
             _loading.value = true
             runCatching {
                 repository.obtenerEjerciciosDeRutina(idRutina)
-            }.onSuccess { lista ->
-                _ejerciciosRutina.value = lista
-                _message.value = "Ejercicios recibidos: ${lista.size}"
+            }.onSuccess {
+                _ejerciciosRutina.value = it
+                _message.value = null
             }.onFailure { e ->
                 _message.value = "Error cargando ejercicios: ${e.message}"
             }
@@ -121,7 +118,7 @@ class RutinasViewModel(
                 }
                 _message.value = "Ejercicio actualizado"
             }.onFailure { e ->
-                _message.value = "No se pudo actualizar: ${e.message}"
+                _message.value = "Error: ${e.message}"
             }
         }
     }
@@ -132,7 +129,7 @@ class RutinasViewModel(
             runCatching {
                 repository.registrarEntrenamiento(
                     RegistroEntrenamientoDto(
-                        usuario = UsuarioRefDto(idUsuario = idUsuario),
+                        usuario = UsuarioRefDto(idUsuario),
                         rutina = rutina,
                         fecha = LocalDate.now().toString(),
                         duracionMin = duracionMin,
@@ -143,7 +140,7 @@ class RutinasViewModel(
             }.onSuccess {
                 _message.value = "Entrenamiento guardado"
             }.onFailure { e ->
-                _message.value = "Error guardando entrenamiento: ${e.message}"
+                _message.value = "Error guardando: ${e.message}"
             }
         }
     }

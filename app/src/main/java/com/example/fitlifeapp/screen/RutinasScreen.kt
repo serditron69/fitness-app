@@ -26,7 +26,8 @@ fun RutinasScreen(
     vm: RutinasViewModel,
     idUsuario: Long,
     onOpenRutina: () -> Unit,
-    onCrearRutina: () -> Unit
+    onCrearRutina: () -> Unit,
+    onVerCalorias: () -> Unit
 ) {
     val rutinas by vm.rutinas.collectAsState()
     val loading by vm.loading.collectAsState()
@@ -39,6 +40,8 @@ fun RutinasScreen(
             .background(BackgroundDark)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+
+            // Header con gradiente
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -50,26 +53,50 @@ fun RutinasScreen(
                     .padding(24.dp)
             ) {
                 Column {
-                    Text(text = "💪 Mis Rutinas", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
-                    Text(text = "Entrena con consistencia", fontSize = 14.sp, color = TextSecondary)
+                    Text(
+                        text = "💪 Mis Rutinas",
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = TextPrimary
+                    )
+                    Text(
+                        text = "Entrena con consistencia",
+                        fontSize = 14.sp,
+                        color = TextSecondary
+                    )
                 }
             }
 
-            Box(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+            // Contenido principal
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 16.dp)
+            ) {
                 when {
                     loading -> CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center),
                         color = PurplePrimary
                     )
+
                     rutinas.isEmpty() -> Column(
                         modifier = Modifier.align(Alignment.Center),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(text = "🏃", fontSize = 48.sp)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "No hay rutinas activas", color = TextSecondary, fontSize = 16.sp)
-                        Text(text = "Crea tu primera rutina con el botón +", color = TextSecondary, fontSize = 13.sp)
+                        Text(
+                            text = "No hay rutinas activas",
+                            color = TextSecondary,
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = "Crea tu primera rutina con el botón +",
+                            color = TextSecondary,
+                            fontSize = 13.sp
+                        )
                     }
+
                     else -> LazyColumn(
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                         contentPadding = PaddingValues(vertical = 16.dp)
@@ -85,13 +112,31 @@ fun RutinasScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = onCrearRutina,
-            modifier = Modifier.align(Alignment.BottomEnd).padding(24.dp),
-            containerColor = PurplePrimary,
-            contentColor = TextPrimary
+        // Botones flotantes
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.End
         ) {
-            Icon(Icons.Default.Add, contentDescription = "Crear rutina")
+            // Botón calorias
+            FloatingActionButton(
+                onClick = onVerCalorias,
+                containerColor = PurpleAccent,
+                contentColor = TextPrimary
+            ) {
+                Text("🥗", fontSize = 20.sp)
+            }
+
+            // Botón crear rutina
+            FloatingActionButton(
+                onClick = onCrearRutina,
+                containerColor = PurplePrimary,
+                contentColor = TextPrimary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Crear rutina")
+            }
         }
     }
 }
@@ -99,7 +144,9 @@ fun RutinasScreen(
 @Composable
 private fun RutinaCard(rutina: RutinaDto, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = BackgroundCard)
     ) {
@@ -107,13 +154,24 @@ private fun RutinaCard(rutina: RutinaDto, onClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    Brush.horizontalGradient(colors = listOf(PurpleDark, BackgroundCard))
+                    Brush.horizontalGradient(
+                        colors = listOf(PurpleDark, BackgroundCard)
+                    )
                 )
                 .padding(16.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(text = rutina.nombre, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
-                Text(text = rutina.descripcion ?: rutina.objetivo, color = TextSecondary, fontSize = 14.sp)
+                Text(
+                    text = rutina.nombre,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    color = TextPrimary
+                )
+                Text(
+                    text = rutina.descripcion ?: rutina.objetivo,
+                    color = TextSecondary,
+                    fontSize = 14.sp
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Surface(
                     shape = RoundedCornerShape(8.dp),

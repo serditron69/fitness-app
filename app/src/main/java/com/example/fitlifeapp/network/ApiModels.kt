@@ -1,7 +1,7 @@
 package com.example.fitlifeapp.network
 
 data class AlimentoDto(
-    val idAlimento: Long,
+    val idAlimento: Long = 0,
     val nombre: String,
     val calorias: Double,
     val proteinas: Double,
@@ -19,7 +19,7 @@ data class EjercicioDto(
 )
 
 data class RutinaDto(
-    val idRutina: Long,
+    val idRutina: Long = 0,
     val nombre: String,
     val descripcion: String? = null,
     val objetivo: String,
@@ -67,4 +67,23 @@ data class UsuarioDto(
 data class LoginRequest(
     val email: String,
     val password: String
+)
+
+data class RegistroComidaDto(
+    val idRegistroComida: Long = 0,
+    val usuario: UsuarioRefDto,
+    val alimento: AlimentoDto,
+    val cantidad: Double,
+    val fecha: String
+)
+
+data class RegistroComidaCrearDto(
+    val usuario: UsuarioRefDto,
+    val alimento: AlimentoIdDto,
+    val cantidad: Double,
+    val fecha: String
+)
+
+data class AlimentoIdDto(
+    val idAlimento: Long
 )

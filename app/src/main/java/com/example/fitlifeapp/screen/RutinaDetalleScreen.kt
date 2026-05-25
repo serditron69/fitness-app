@@ -1,69 +1,77 @@
 package com.example.fitlifeapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.fitlifeapp.network.RutinaEjercicioDto
+import com.example.fitlifeapp.ui.theme.*
 import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RutinaDetalleScreen(
     vm: RutinasViewModel,
-    idUsuario: Long = 1L
+    idUsuario: Long,
+    onVolver: () -> Unit = {}
 ) {
     val rutina by vm.rutinaSeleccionada.collectAsState()
-    val ejercicios: List<RutinaEjercicioDto> by vm.ejerciciosRutina.collectAsState()
+    val ejercicios by vm.ejerciciosRutina.collectAsState()
     val message by vm.message.collectAsState()
+    val loading by vm.loading.collectAsState()
 
     var duracion by remember { mutableStateOf("") }
     var notas by remember { mutableStateOf("") }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(rutina?.nombre ?: "Detalle rutina") }
-            )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
-        ) {
-            LazyColumn(
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundDark)
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(350.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .background(Brush.verticalGradient(listOf(PurpleDark, BackgroundDark)))
+                    .padding(24.dp)
+            ) {
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = rutina?.nombre ?: "Detalle",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = TextPrimary
+                        )
+                        TextButton(onClick = onVolver) {
+                            Text("Volver", color = PurpleLight)
+                        }
+                    }
+                    rutina?.let {
+                        Text(text = it.objetivo, color = TextSecondary, fontSize = 14.sp)
+                        Text(text = "Nivel: ${it.nivel}", color = PurpleLight, fontSize = 13.sp)
+                    }
+                }
+            }
+
+            LazyColumn(
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.weight(1f)
             ) {
                 items(ejercicios) { item ->
                     EjercicioEditableCard(
@@ -75,39 +83,73 @@ fun RutinaDetalleScreen(
                 }
             }
 
-            OutlinedTextField(
-                value = duracion,
-                onValueChange = { duracion = it },
-                label = { Text("Duración en minutos") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            OutlinedTextField(
-                value = notas,
-                onValueChange = { notas = it },
-                label = { Text("Notas") },
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Button(
-                onClick = {
-                    vm.finalizarRutina(
-                        idUsuario = idUsuario,
-                        duracionMin = duracion.toIntOrNull() ?: 0,
-                        notas = notas
-                    )
-                },
-                modifier = Modifier.fillMaxWidth()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(BackgroundCard)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Finalizar entrenamiento")
-            }
+                OutlinedTextField(
+                    value = duracion,
+                    onValueChange = { duracion = it },
+                    label = { Text("Duracion en minutos") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PurplePrimary,
+                        unfocusedBorderColor = TextSecondary,
+                        focusedLabelColor = PurplePrimary,
+                        cursorColor = PurplePrimary,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
 
-            message?.let {
-                Text(text = it)
-            }
+                OutlinedTextField(
+                    value = notas,
+                    onValueChange = { notas = it },
+                    label = { Text("Notas") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = PurplePrimary,
+                        unfocusedBorderColor = TextSecondary,
+                        focusedLabelColor = PurplePrimary,
+                        cursorColor = PurplePrimary,
+                        focusedTextColor = TextPrimary,
+                        unfocusedTextColor = TextPrimary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                )
 
-            Spacer(modifier = Modifier.size(4.dp))
+                message?.let {
+                    Text(
+                        text = it,
+                        color = if (it.startsWith("Error")) ErrorColor else SuccessColor,
+                        fontSize = 13.sp
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        vm.finalizarRutina(
+                            idUsuario = idUsuario,
+                            duracionMin = duracion.toIntOrNull() ?: 0,
+                            notas = notas
+                        )
+                    },
+                    enabled = !loading && duracion.isNotBlank(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(52.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = PurplePrimary)
+                ) {
+                    if (loading) CircularProgressIndicator(modifier = Modifier.size(20.dp))
+                    else Text("Finalizar entrenamiento", fontWeight = FontWeight.Bold)
+                }
+            }
         }
     }
 }
@@ -123,37 +165,84 @@ private fun EjercicioEditableCard(
         mutableStateOf(item.pesoKg?.toString() ?: "")
     }
 
-    ElevatedCard(
-        modifier = Modifier.fillMaxWidth()
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = BackgroundCard)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             Text(
                 text = item.ejercicio?.nombre ?: "Ejercicio",
-                style = MaterialTheme.typography.titleMedium
+                color = TextPrimary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
             )
-
-            Text(text = item.ejercicio?.grupoMuscular ?: "")
-
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { onSeriesChange(item.series - 1) }) {
-                    Text("-")
-                }
-                Text(text = "Series: ${item.series}")
-                Button(onClick = { onSeriesChange(item.series + 1) }) {
-                    Text("+")
+            item.ejercicio?.grupoMuscular?.let {
+                Surface(
+                    shape = RoundedCornerShape(6.dp),
+                    color = PurplePrimary.copy(alpha = 0.2f)
+                ) {
+                    Text(
+                        text = it,
+                        color = PurpleLight,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                    )
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { onRepsChange(item.repeticiones - 1) }) {
-                    Text("-")
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Series:", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.width(70.dp))
+                IconButton(
+                    onClick = { onSeriesChange(item.series - 1) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Text("-", color = PurpleLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
-                Text(text = "Reps: ${item.repeticiones}")
-                Button(onClick = { onRepsChange(item.repeticiones + 1) }) {
-                    Text("+")
+                Text(
+                    text = "${item.series}",
+                    color = TextPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.width(32.dp)
+                )
+                IconButton(
+                    onClick = { onSeriesChange(item.series + 1) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Text("+", color = PurpleLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                }
+            }
+
+            Row(
+                verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Reps:", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.width(70.dp))
+                IconButton(
+                    onClick = { onRepsChange(item.repeticiones - 1) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Text("-", color = PurpleLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                }
+                Text(
+                    text = "${item.repeticiones}",
+                    color = TextPrimary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    modifier = Modifier.width(32.dp)
+                )
+                IconButton(
+                    onClick = { onRepsChange(item.repeticiones + 1) },
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    Text("+", color = PurpleLight, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 }
             }
 
@@ -163,9 +252,18 @@ private fun EjercicioEditableCard(
                     pesoText = it
                     onPesoChange(it.toDoubleOrNull())
                 },
-                label = { Text("Peso kg") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth()
+                label = { Text("Peso (kg)") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth(),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = PurplePrimary,
+                    unfocusedBorderColor = TextSecondary,
+                    focusedLabelColor = PurplePrimary,
+                    cursorColor = PurplePrimary,
+                    focusedTextColor = TextPrimary,
+                    unfocusedTextColor = TextPrimary
+                ),
+                shape = RoundedCornerShape(12.dp)
             )
         }
     }
