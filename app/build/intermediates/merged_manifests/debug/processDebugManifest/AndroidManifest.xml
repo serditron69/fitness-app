@@ -23,7 +23,6 @@
         android:extractNativeLibs="false"
         android:label="FitLife"
         android:supportsRtl="true"
-        android:testOnly="true"
         android:theme="@style/Theme.FitLifeApp" >
         <activity
             android:name="com.example.fitlifeapp.MainActivity"
