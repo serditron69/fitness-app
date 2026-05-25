@@ -1,59 +1,70 @@
 package com.example.fitlifeapp.network
 
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class UsuarioDto(
-    val idUsuario: Long? = null,
-    val nombre: String = "",
-    val email: String = "",
-    val rol: String = "USER",
-    val pesoKg: Double? = null,
-    val alturaCm: Int? = null
-)
-
-@Serializable
-data class EjercicioDto(
-    val idEjercicio: Long? = null,
-    val nombre: String = "",
-    val grupoMuscular: String = "",
-    val tipo: String = "",
-    val descripcion: String? = null,
-    val equipamiento: String? = null,
-    val visible: Boolean = true
-)
-
-@Serializable
-data class RutinaDto(
-    val idRutina: Long? = null,
-    val usuario: UsuarioDto? = null,
-    val nombre: String = "",
-    val descripcion: String? = null,
-    val objetivo: String = "",
-    val nivel: String = "",
-    val activa: Boolean = true
-)
-
-@Serializable
-data class RegistroDto(
-    val idRegistro: Long? = null,
-    val usuario: UsuarioDto? = null,
-    val fecha: String = "",
-    val duracionMin: Int? = null,
-    val caloriasQuemadas: Int? = null,
-    val estado: String = ""
-)
-
-@Serializable
 data class AlimentoDto(
-    val idAlimento: Long? = null,
-    val nombre: String = "",
-    val categoria: String = "",
-    val calorias100g: Double = 0.0,
-    val proteinas100g: Double? = 0.0,
-    val carbohidratos100g: Double? = 0.0,
-    val grasas100g: Double? = 0.0,
-    val fibra100g: Double? = 0.0,
-    val fuente: String? = "MANUAL",
-    val visible: Boolean = true
+    val idAlimento: Long,
+    val nombre: String,
+    val calorias: Double,
+    val proteinas: Double,
+    val carbohidratos: Double,
+    val grasas: Double
+)
+
+data class EjercicioDto(
+    val idEjercicio: Long,
+    val nombre: String,
+    val grupoMuscular: String,
+    val tipo: String,
+    val descripcion: String? = null,
+    val equipamiento: String? = null
+)
+
+data class RutinaDto(
+    val idRutina: Long,
+    val nombre: String,
+    val descripcion: String? = null,
+    val objetivo: String,
+    val nivel: String
+)
+
+data class RutinaCrearDto(
+    val nombre: String,
+    val descripcion: String?,
+    val objetivo: String,
+    val nivel: String,
+    val activa: Boolean = true,
+    val usuario: UsuarioRefDto
+)
+
+data class RutinaEjercicioDto(
+    val idRutinaEjercicio: Long,
+    val rutina: RutinaDto? = null,
+    val ejercicio: EjercicioDto? = null,
+    val series: Int,
+    val repeticiones: Int,
+    val pesoKg: Double? = null
+)
+
+data class UsuarioRefDto(
+    val idUsuario: Long
+)
+
+data class RegistroEntrenamientoDto(
+    val usuario: UsuarioRefDto,
+    val rutina: RutinaDto,
+    val fecha: String,
+    val duracionMin: Int,
+    val notas: String,
+    val estado: String
+)
+
+data class UsuarioDto(
+    val idUsuario: Long = 0,
+    val nombre: String,
+    val email: String,
+    val password: String
+)
+
+data class LoginRequest(
+    val email: String,
+    val password: String
 )

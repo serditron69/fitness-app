@@ -1349,6 +1349,7 @@ com.example.fitlifeapp:id/notification_main_column = 0x7f080124
 com.example.fitlifeapp:style/Widget.MaterialComponents.MaterialCalendar.DayTextView = 0x7f0f0427
 com.example.fitlifeapp:id/navigation_header_container = 0x7f08011e
 com.example.fitlifeapp:id/navigation_bar_item_labels_group = 0x7f08011b
+com.example.fitlifeapp:xml/network_security_config = 0x7f110000
 com.example.fitlifeapp:id/navigation_bar_item_icon_view = 0x7f08011a
 com.example.fitlifeapp:id/navigation_bar_item_active_indicator_view = 0x7f080118
 com.example.fitlifeapp:style/Widget.MaterialComponents.TextInputEditText.OutlinedBox = 0x7f0f044f

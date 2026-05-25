@@ -3,31 +3,49 @@ package com.example.fitlifeapp.network
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FitLifeApi {
-    @GET("api/usuarios")
-    suspend fun getUsuarios(): List<UsuarioDto>
-
-    @GET("api/ejercicios")
-    suspend fun getEjercicios(): List<EjercicioDto>
-
-    @GET("api/rutinas")
-    suspend fun getRutinas(): List<RutinaDto>
-
-    @GET("api/registros")
-    suspend fun getRegistros(): List<RegistroDto>
 
     @GET("api/alimentos")
-    suspend fun getAlimentos(): List<AlimentoDto>
+    suspend fun obtenerAlimentos(): List<AlimentoDto>
 
-    @GET("api/alimentos/open-food-facts/buscar")
-    suspend fun buscarAlimentos(@Query("nombre") nombre: String): List<AlimentoDto>
+    @GET("api/rutinas/usuario/{idUsuario}/activas")
+    suspend fun obtenerRutinasActivas(
+        @Path("idUsuario") idUsuario: Long
+    ): List<RutinaDto>
 
-    @POST("api/alimentos/open-food-facts/importar")
-    suspend fun importarAlimento(@Body alimento: AlimentoDto): AlimentoDto
+    @GET("api/rutina-ejercicios/rutina/{idRutina}")
+    suspend fun obtenerEjerciciosDeRutina(
+        @Path("idRutina") idRutina: Long
+    ): List<RutinaEjercicioDto>
 
-    @GET("api/registro-comidas/usuario/{id}")
-    suspend fun getComidasUsuario(@Path("id") id: Long): List<Map<String, String>>
+    @PUT("api/rutina-ejercicios/{idRutinaEjercicio}")
+    suspend fun actualizarRutinaEjercicio(
+        @Path("idRutinaEjercicio") idRutinaEjercicio: Long,
+        @Body item: RutinaEjercicioDto
+    ): RutinaEjercicioDto
+
+    @POST("api/registros")
+    suspend fun registrarEntrenamiento(
+        @Body registro: RegistroEntrenamientoDto
+    )
+
+    @POST("api/usuarios")
+    suspend fun registrarUsuario(
+        @Body usuario: UsuarioDto
+    ): UsuarioDto
+
+    @POST("api/usuarios/login")
+    suspend fun login(
+        @Query("email") email: String,
+        @Query("password") password: String
+    ): UsuarioDto
+
+    @POST("api/rutinas")
+    suspend fun crearRutina(
+        @Body rutina: RutinaCrearDto
+    ): RutinaDto
 }

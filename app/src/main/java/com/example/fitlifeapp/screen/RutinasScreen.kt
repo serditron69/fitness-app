@@ -1,263 +1,133 @@
 package com.example.fitlifeapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FitnessCenter
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import com.example.fitlifeapp.network.RutinaDto
-import com.example.fitlifeapp.viewmodel.HomeViewModel
+import com.example.fitlifeapp.ui.theme.*
+import com.example.fitlifeapp.viewmodel.RutinasViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RutinasScreen(vm: HomeViewModel = viewModel()) {
-    val state by vm.uiState.collectAsStateWithLifecycle()
+fun RutinasScreen(
+    vm: RutinasViewModel,
+    idUsuario: Long,
+    onOpenRutina: () -> Unit,
+    onCrearRutina: () -> Unit
+) {
+    val rutinas by vm.rutinas.collectAsState()
+    val loading by vm.loading.collectAsState()
 
-    var search by remember { mutableStateOf("") }
-    var nivelSeleccionado by remember { mutableStateOf("Todos") }
-    var rutinaSeleccionada by remember { mutableStateOf<RutinaDto?>(null) }
+    LaunchedEffect(idUsuario) { vm.cargarRutinas(idUsuario) }
 
-    val rutinas = state.rutinas
-    val niveles = listOf("Todos") + rutinas.map { it.nivel }.distinct().sorted()
-
-    val rutinasFiltradas = rutinas.filter { rutina ->
-        val coincideTexto = search.isBlank() ||
-                rutina.nombre.contains(search, ignoreCase = true) ||
-                rutina.objetivo.contains(search, ignoreCase = true) ||
-                (rutina.descripcion?.contains(search, ignoreCase = true) == true)
-
-        val coincideNivel = nivelSeleccionado == "Todos" || rutina.nivel == nivelSeleccionado
-
-        coincideTexto && coincideNivel
-    }
-
-    LazyColumn(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        contentPadding = PaddingValues(bottom = 24.dp)
+            .background(BackgroundDark)
     ) {
-        item {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Text(
-                    text = "Rutinas",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "Explora rutinas según tu objetivo y nivel.",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        item {
-            OutlinedTextField(
-                value = search,
-                onValueChange = { search = it },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(18.dp),
-                leadingIcon = {
-                    Icon(Icons.Default.Search, contentDescription = null)
-                },
-                label = {
-                    Text("Buscar rutina")
-                }
-            )
-        }
-
-        item {
-            Text(
-                text = "Filtrar por nivel",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold
-            )
-        }
-
-        item {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(PurpleDark, BackgroundDark)
+                        )
+                    )
+                    .padding(24.dp)
             ) {
-                niveles.forEach { nivel ->
-                    FilterChip(
-                        selected = nivelSeleccionado == nivel,
-                        onClick = { nivelSeleccionado = nivel },
-                        label = { Text(nivel) }
-                    )
+                Column {
+                    Text(text = "💪 Mis Rutinas", fontSize = 28.sp, fontWeight = FontWeight.Bold, color = TextPrimary)
+                    Text(text = "Entrena con consistencia", fontSize = 14.sp, color = TextSecondary)
                 }
             }
-        }
 
-        if (!state.loading && rutinasFiltradas.isEmpty()) {
-            item {
-                Card(
-                    shape = RoundedCornerShape(22.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+            Box(modifier = Modifier.weight(1f).padding(horizontal = 16.dp)) {
+                when {
+                    loading -> CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
+                        color = PurplePrimary
                     )
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    rutinas.isEmpty() -> Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(
-                            text = "No hay rutinas",
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "Prueba cambiando los filtros o revisa la conexión.",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        Text(text = "🏃", fontSize = 48.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "No hay rutinas activas", color = TextSecondary, fontSize = 16.sp)
+                        Text(text = "Crea tu primera rutina con el botón +", color = TextSecondary, fontSize = 13.sp)
+                    }
+                    else -> LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        contentPadding = PaddingValues(vertical = 16.dp)
+                    ) {
+                        items(rutinas) { rutina ->
+                            RutinaCard(rutina) {
+                                vm.seleccionarRutina(rutina)
+                                onOpenRutina()
+                            }
+                        }
                     }
                 }
             }
         }
 
-        items(rutinasFiltradas) { rutina ->
-            RutinaCard(
-                rutina = rutina,
-                onVerClick = { rutinaSeleccionada = rutina }
-            )
+        FloatingActionButton(
+            onClick = onCrearRutina,
+            modifier = Modifier.align(Alignment.BottomEnd).padding(24.dp),
+            containerColor = PurplePrimary,
+            contentColor = TextPrimary
+        ) {
+            Icon(Icons.Default.Add, contentDescription = "Crear rutina")
         }
-
-        if (state.error != null) {
-            item {
-                Text(
-                    text = state.error ?: "",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-        }
-    }
-
-    rutinaSeleccionada?.let { rutina ->
-        AlertDialog(
-            onDismissRequest = { rutinaSeleccionada = null },
-            confirmButton = {
-                TextButton(onClick = { rutinaSeleccionada = null }) {
-                    Text("Cerrar")
-                }
-            },
-            title = {
-                Text(rutina.nombre)
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Objetivo: ${rutina.objetivo}")
-                    Text("Nivel: ${rutina.nivel}")
-                    Text("Descripción: ${rutina.descripcion ?: "Sin descripción"}")
-                    Text("Estado: ${if (rutina.activa) "Activa" else "Inactiva"}")
-                }
-            }
-        )
     }
 }
 
 @Composable
-fun RutinaCard(
-    rutina: RutinaDto,
-    onVerClick: () -> Unit
-) {
+private fun RutinaCard(rutina: RutinaDto, onClick: () -> Unit) {
     Card(
-        shape = RoundedCornerShape(22.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = BackgroundCard)
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+                .background(
+                    Brush.horizontalGradient(colors = listOf(PurpleDark, BackgroundCard))
+                )
+                .padding(16.dp)
         ) {
-            Text(
-                text = rutina.nombre,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            AssistChip(
-                onClick = { },
-                label = {
-                    RowTextWithIcon(
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.Flag,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        text = rutina.objetivo
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(text = rutina.nombre, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = TextPrimary)
+                Text(text = rutina.descripcion ?: rutina.objetivo, color = TextSecondary, fontSize = 14.sp)
+                Spacer(modifier = Modifier.height(4.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = PurplePrimary.copy(alpha = 0.3f)
+                ) {
+                    Text(
+                        text = rutina.nivel,
+                        color = PurpleLight,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                     )
                 }
-            )
-
-            AssistChip(
-                onClick = { },
-                label = {
-                    RowTextWithIcon(
-                        icon = {
-                            Icon(
-                                imageVector = Icons.Default.FitnessCenter,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        },
-                        text = rutina.nivel
-                    )
-                }
-            )
-
-            Text(
-                text = rutina.descripcion ?: "Rutina lista para seguir hoy",
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            AssistChip(
-                onClick = onVerClick,
-                label = { Text("Ver detalle") }
-            )
+            }
         }
-    }
-}
-
-@Composable
-fun RowTextWithIcon(
-    icon: @Composable () -> Unit,
-    text: String
-) {
-    androidx.compose.foundation.layout.Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        icon()
-        Text(text)
     }
 }

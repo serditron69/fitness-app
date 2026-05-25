@@ -1,16 +1,60 @@
 package com.example.fitlifeapp.repository
 
 import com.example.fitlifeapp.network.AlimentoDto
+import com.example.fitlifeapp.network.FitLifeApi
+import com.example.fitlifeapp.network.RegistroEntrenamientoDto
 import com.example.fitlifeapp.network.RetrofitClient
+import com.example.fitlifeapp.network.RutinaCrearDto
+import com.example.fitlifeapp.network.RutinaDto
+import com.example.fitlifeapp.network.RutinaEjercicioDto
+import com.example.fitlifeapp.network.UsuarioDto
+import com.example.fitlifeapp.network.UsuarioRefDto
 
-class FitnessRepository {
-    private val api = RetrofitClient.api
+class FitnessRepository(
+    private val api: FitLifeApi = RetrofitClient.api
+) {
 
-    suspend fun usuarios() = api.getUsuarios()
-    suspend fun ejercicios() = api.getEjercicios().filter { it.visible }
-    suspend fun rutinas() = api.getRutinas().filter { it.activa }
-    suspend fun registros() = api.getRegistros()
-    suspend fun alimentos() = api.getAlimentos().filter { it.visible }
-    suspend fun buscarAlimentos(nombre: String) = api.buscarAlimentos(nombre)
-    suspend fun importarAlimento(alimento: AlimentoDto) = api.importarAlimento(alimento)
+    suspend fun obtenerAlimentos(): List<AlimentoDto> {
+        return api.obtenerAlimentos()
+    }
+
+    suspend fun obtenerRutinasActivas(idUsuario: Long): List<RutinaDto> {
+        return api.obtenerRutinasActivas(idUsuario)
+    }
+
+    suspend fun crearRutina(rutina: RutinaDto, idUsuario: Long): RutinaDto {
+        return api.crearRutina(
+            RutinaCrearDto(
+                nombre = rutina.nombre,
+                descripcion = rutina.descripcion,
+                objetivo = rutina.objetivo,
+                nivel = rutina.nivel,
+                activa = true,
+                usuario = UsuarioRefDto(idUsuario = idUsuario)
+            )
+        )
+    }
+
+    suspend fun obtenerEjerciciosDeRutina(idRutina: Long): List<RutinaEjercicioDto> {
+        return api.obtenerEjerciciosDeRutina(idRutina)
+    }
+
+    suspend fun actualizarRutinaEjercicio(
+        idRutinaEjercicio: Long,
+        item: RutinaEjercicioDto
+    ): RutinaEjercicioDto {
+        return api.actualizarRutinaEjercicio(idRutinaEjercicio, item)
+    }
+
+    suspend fun registrarEntrenamiento(registro: RegistroEntrenamientoDto) {
+        api.registrarEntrenamiento(registro)
+    }
+
+    suspend fun registrarUsuario(usuario: UsuarioDto): UsuarioDto {
+        return api.registrarUsuario(usuario)
+    }
+
+    suspend fun login(email: String, password: String): UsuarioDto {
+        return api.login(email, password)
+    }
 }
