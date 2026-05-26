@@ -1,11 +1,13 @@
 package com.example.fitnessapp.controller;
 
+import com.example.fitnessapp.dto.RegistroComidaCrearDto;
 import com.example.fitnessapp.model.RegistroComida;
 import com.example.fitnessapp.service.RegistroComidaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Registro Comidas", description = "Registro diario de comidas y calorias consumidas")
 public class RegistroComidaController {
+
     private final RegistroComidaService registroComidaService;
 
     @GetMapping("/usuario/{idUsuario}")
@@ -32,7 +35,9 @@ public class RegistroComidaController {
     }
 
     @PostMapping
-    public RegistroComida crear(@RequestBody RegistroComida r) { return registroComidaService.guardar(r); }
+    public RegistroComida crear(@RequestBody RegistroComidaCrearDto dto) {
+        return registroComidaService.guardarDesdeDto(dto);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<RegistroComida> actualizar(@PathVariable Long id, @RequestBody RegistroComida r) {
