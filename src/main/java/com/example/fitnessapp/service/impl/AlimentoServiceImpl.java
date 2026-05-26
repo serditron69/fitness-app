@@ -49,7 +49,7 @@ public class AlimentoServiceImpl implements AlimentoService {
         try {
             String url = "https://world.openfoodfacts.org/cgi/search.pl?search_terms="
                     + nombre.replace(" ", "+")
-                    + "&json=true&page_size=5&fields=product_name,nutriments";
+                    + "&json=true&page_size=50&fields=product_name,nutriments";
 
             String response = restTemplate.getForObject(url, String.class);
             JsonNode root = objectMapper.readTree(response);
