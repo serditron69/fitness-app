@@ -1,6 +1,7 @@
 package com.example.fitnessapp.controller;
 
 import com.example.fitnessapp.dto.RegistroComidaCrearDto;
+import com.example.fitnessapp.dto.RegistroComidaResponseDto;
 import com.example.fitnessapp.model.RegistroComida;
 import com.example.fitnessapp.service.RegistroComidaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -25,12 +26,18 @@ public class RegistroComidaController {
     }
 
     @GetMapping("/usuario/{idUsuario}/fecha/{fecha}")
-    public List<RegistroComida> porUsuarioYFecha(@PathVariable Long idUsuario, @PathVariable LocalDate fecha) {
+    public List<RegistroComidaResponseDto> porUsuarioYFecha(
+            @PathVariable Long idUsuario,
+            @PathVariable LocalDate fecha
+    ) {
         return registroComidaService.listarPorUsuarioYFecha(idUsuario, fecha);
     }
 
     @GetMapping("/usuario/{idUsuario}/calorias-dia/{fecha}")
-    public ResponseEntity<Double> totalCaloriasDia(@PathVariable Long idUsuario, @PathVariable LocalDate fecha) {
+    public ResponseEntity<Double> totalCaloriasDia(
+            @PathVariable Long idUsuario,
+            @PathVariable LocalDate fecha
+    ) {
         return ResponseEntity.ok(registroComidaService.totalCaloriasDia(idUsuario, fecha));
     }
 
@@ -40,7 +47,10 @@ public class RegistroComidaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RegistroComida> actualizar(@PathVariable Long id, @RequestBody RegistroComida r) {
+    public ResponseEntity<RegistroComida> actualizar(
+            @PathVariable Long id,
+            @RequestBody RegistroComida r
+    ) {
         return ResponseEntity.ok(registroComidaService.actualizar(id, r));
     }
 

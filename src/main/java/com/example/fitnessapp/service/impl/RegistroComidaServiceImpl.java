@@ -1,6 +1,8 @@
 package com.example.fitnessapp.service.impl;
 
+import com.example.fitnessapp.dto.AlimentoResponseDto;
 import com.example.fitnessapp.dto.RegistroComidaCrearDto;
+import com.example.fitnessapp.dto.RegistroComidaResponseDto;
 import com.example.fitnessapp.model.Alimento;
 import com.example.fitnessapp.model.DetalleComida;
 import com.example.fitnessapp.model.RegistroComida;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +35,50 @@ public class RegistroComidaServiceImpl implements RegistroComidaService {
     }
 
     @Override
-    public List<RegistroComida> listarPorUsuarioYFecha(Long id, LocalDate fecha) {
-        return registroComidaRepository.findByUsuario_IdUsuarioAndFecha(id, fecha);
+    public List<RegistroComidaResponseDto> listarPorUsuarioYFecha(Long id, LocalDate fecha) {
+        List<RegistroComida> registros = registroComidaRepository.findByUsuario_IdUsuarioAndFecha(id, fecha);
+
+        return registros.stream()
+                .flatMap(registro -> {
+                    List<DetalleComida> detalles = registro.getDetalles();
+
+                    if (detalles == null || detalles.isEmpty()) {
+                        return java.util.stream.Stream.of(
+                                new RegistroComidaResponseDto(
+                                        registro.getIdRegistroComida(),
+                                        registro.getFecha().toString(),
+                                        registro.getTipoComida(),
+                                        0.0,
+                                        null
+                                )
+                        );
+                    }
+
+                    return detalles.stream().map(detalle -> {
+                        Alimento alimento = detalle.getAlimento();
+
+                        AlimentoResponseDto alimentoDto = null;
+                        if (alimento != null) {
+                            alimentoDto = new AlimentoResponseDto(
+                                    alimento.getIdAlimento(),
+                                    alimento.getNombre(),
+                                    alimento.getCalorias100g(),
+                                    alimento.getProteinas100g(),
+                                    alimento.getCarbohidratos100g(),
+                                    alimento.getGrasas100g()
+                            );
+                        }
+
+                        return new RegistroComidaResponseDto(
+                                registro.getIdRegistroComida(),
+                                registro.getFecha().toString(),
+                                registro.getTipoComida(),
+                                detalle.getCantidadGramos(),
+                                alimentoDto
+                        );
+                    });
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
